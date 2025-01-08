@@ -1,0 +1,259 @@
+use W3Resource
+--1 joins
+select s.name,cust_name,s.city from Inventory.Salesman as s
+join Inventory.Customer as c on s.salesman_id=c.salesman_id
+where s.city =c.city
+--2
+select * from Inventory.Customer as c
+join Inventory.Orders as o
+on c.customer_id=o.customer_id
+where purch_amt between 500 and 2000
+---3
+select s.name,cust_name,s.city,commission from Inventory.Salesman as s
+join Inventory.Customer as c on s.salesman_id=c.salesman_id
+--4
+select * from Inventory.Customer as c
+join Inventory.Salesman as s on c.salesman_id=s.salesman_id
+where commission>12
+--5
+select s.* from Inventory.Customer as c
+join Inventory.Salesman as s on c.salesman_id=s.salesman_id
+where commission>0.12 and c.city<>s.city
+--6
+select * from Inventory.Orders as o
+join Inventory.Customer as c
+on o.customer_id =c.customer_id
+---7
+select * from Inventory.Orders as o
+left join Inventory.Customer as c on o.customer_id=c.customer_id
+left join Inventory.Salesman as s on o.salesman_id=s.salesman_id
+--8
+select * from Inventory.Customer as c
+join Inventory.Salesman as s on c.salesman_id=s.salesman_id
+order by c.customer_id
+--9
+select * from Inventory.Customer as c
+join Inventory.Salesman as s on c.salesman_id=s.salesman_id
+where c.grade <300
+--10
+select  * from Inventory.Orders as o left join Inventory.Customer as c on o.customer_id=c.customer_id
+order by ord_date
+--11
+select * from Inventory.Customer as c
+left join Inventory.Salesman as s
+on c.salesman_id=c.salesman_id
+left join Inventory.Orders as o
+on c.salesman_id=o.salesman_id
+--12
+select * from Inventory.Customer as c
+join Inventory.Salesman  as s
+on c.salesman_id=s.salesman_id
+order by c.salesman_id
+--13
+select * from Inventory.Customer as c
+right join Inventory.Salesman  as s
+on c.salesman_id=s.salesman_id
+right join Inventory.Orders as o
+on o.salesman_id=c.salesman_id
+---14
+SELECT a.cust_name,a.city,a.grade, b.name AS Salesman, c.ord_no, c.ord_date, c.purch_amt FROM inventory.Customer as a
+RIGHT JOIN Inventory.salesman b ON b.salesman_id=a.salesman_id 
+LEFT JOIN Inventory.orders c ON c.customer_id=a.customer_id
+WHERE c.purch_amt>=2000 AND a.grade IS NOT NULL
+--15
+select * from Inventory.Customer as c
+left join Inventory.Orders as o on c.customer_id=o.customer_id
+--16
+select * from Inventory.Customer as c
+full join Inventory.Orders as o on c.customer_id=o.customer_id
+where grade is not null
+--17
+select * from Inventory.Salesman as s 
+cross join Inventory.Customer
+--18
+select * from Inventory.Salesman 
+cross join Inventory.Customer
+where Salesman.city is not null
+--19
+select * from Inventory.Salesman s
+cross join Inventory.Customer c
+where grade is not null and s.city=c.city
+--20
+select * from Inventory.Salesman s
+cross join Inventory.Customer c
+where grade is not null and s.city<>c.city
+--21
+select * from company_mast as m
+join item_mast as i
+on m.com_id=i.pro_com
+--22
+select pro_name as item_name ,pro_price,com_name from company_mast as m
+join item_mast as i
+on m.com_id=i.pro_com
+--23
+select avg(pro_price),com_name from company_mast as m
+join item_mast as i
+on m.com_id=i.pro_com
+group by com_name
+--24
+select avg(pro_price),com_name from company_mast as m
+join item_mast as i
+on m.com_id=i.pro_com
+where pro_price>=350
+group by com_name
+--25
+select max(pro_price),pro_name from company_mast as m
+join item_mast as i
+on m.com_id=i.pro_com
+group by pro_name
+--26
+select * from emp_department e
+join emp_details as d
+on e.dpt_code=d.emp_dept
+--27
+select emp_fname as first_name ,emp_lname as last_name,dpt_name,dpt_allotment from emp_department e
+join emp_details as d
+on e.dpt_code=d.emp_dept
+--28
+select emp_fname as first_name ,emp_lname as last_name from emp_department e
+join emp_details as d
+on e.dpt_code=d.emp_dept
+where dpt_allotment>50000
+--29
+select dpt_name from emp_department e
+join emp_details as d
+on e.dpt_code=d.emp_dept
+group by e.dpt_name
+having count(*)>2
+
+-------from hr
+--1
+select first_name,last_name,d.department_id,department_name  from hr.Departments as d
+join hr.Employees as e 
+on d.department_id=e.department_id
+--2
+select first_name,last_name,location_id from hr.Departments as d
+join hr.Employees as e 
+on d.department_id=e.department_id
+---3
+select * from hr.Employees as e
+join hr.Job_Grades as g
+on e.salary between g.lowest_sal and g.highest_sal
+--4
+select distinct department_name from  hr.Departments as d
+join hr.Employees as e
+on d.department_id=e.department_id
+where d.department_id=80 or d.department_id=40
+--5
+select  first_name,last_name from  hr.Departments as d
+join hr.Employees as e
+on d.department_id=e.department_id
+where first_name like '%z%'
+--6
+select first_name,last_name,department_name from hr.Departments as d
+left join hr.Employees as e
+on d.department_id=e.department_id
+--7
+select first_name,last_name,salary from  hr.Employees
+where salary < (select salary from hr.Employees where employee_id=182)
+--8
+select e.first_name as employee,h.first_name as manager from hr.Employees  as e 
+join hr.Employees as h
+on e.employee_id=h.manager_id
+--9
+select department_name,city  from hr.Departments as d
+join hr.Locations as l on d.location_id=l.location_id
+--10
+select first_name,last_name from hr.Departments as d
+right join hr.Employees as e
+on d.department_id=e.department_id
+--11
+select * from hr.Employees as e
+left join hr.Employees as h
+on e.manager_id=h.employee_id
+--12
+select e.first_name,e.last_name,h.department_id from hr.Employees as e
+join hr.Employees as h on e.department_id=h.department_id
+and h.last_name='Taylor'
+--13
+select * from hr.Job_History as h
+join hr.Employees as e
+on h.employee_id=e.employee_id
+where start_date between  '1993-01-01' and '1997-8-31'
+--14
+--15
+select avg(salary),department_name,count(employee_id) from hr.Employees as e
+join hr.Departments  as d
+on e.department_id=d.department_id
+group by department_name
+--16
+--natural join 
+--17
+select * from hr.Countries as c
+ join hr.Locations as l
+on c.country_id=l.country_id
+ join hr.Departments as d
+ on d.location_id=l.location_id
+ --18
+ select * from hr.Departments as d
+ join hr.Employees as e
+ on d.manager_id=e.employee_id
+ --19
+ select avg(salary) from hr.Employees as e
+ join hr.Jobs as j 
+ on e.job_id=j.job_id
+ group by j.job_title
+ --20
+ select * from hr.Employees as e
+ join hr.Job_History as h
+ on e.employee_id=h.employee_id
+ where salary >12000
+--21
+SELECT countries.country_name, locations.city, COUNT(departments.department_id)
+FROM hr.Countries
+JOIN hr.Locations ON countries.country_id = locations.country_id
+JOIN hr.Departments ON locations.location_id = departments.location_id
+WHERE departments.department_id IN (
+    SELECT department_id 
+    FROM hr.Employees 
+    GROUP BY department_id 
+    HAVING COUNT(department_id) >= 2
+)
+GROUP BY countries.country_name, locations.city;
+
+
+ --22
+ select * from hr.Employees as e
+ join hr.Departments as d
+ on e.department_id=d.department_id
+ join hr.Locations as l 
+ on l.location_id=d.location_id
+ --23
+ SELECT hr.Job_History.employee_id, hr.Jobs.job_title, (job_history.end_date - job_history.start_date) AS DAYS 
+FROM hr.Job_History
+JOIN hr.Jobs ON job_history.job_id = jobs.job_id
+WHERE job_history.department_id = 80
+--24
+SELECT employees.first_name + ' ' + employees.last_name AS Employee_name, employees.salary
+FROM hr.Employees
+JOIN hr.Departments ON employees.department_id = departments.department_id
+JOIN hr.Locations ON departments.location_id = locations.location_id
+WHERE locations.city = 'London'
+--25
+select first_name+' '+last_name as full_name ,job_title,start_date,end_date from hr.jobs as j
+join hr.Job_History as h
+on j.job_id=h.job_id
+join hr.Employees as e
+on e.job_id=h.job_id
+where commission_pct=0
+--26
+select d. department_id,department_name,count(employee_id) from hr.Departments as d
+join hr.Employees as e
+on d.department_id=e.department_id
+group by d.department_id,department_name
+--27
+SELECT e.first_name+' '+e.last_name AS Employee_name, e.employee_id, c.country_name
+FROM hr.Employees e
+JOIN hr.Departments d ON e.department_id = d.department_id
+JOIN hr.Locations l ON d.location_id = l.location_id
+JOIN hr.Countries c ON l.country_id = c.country_id;
