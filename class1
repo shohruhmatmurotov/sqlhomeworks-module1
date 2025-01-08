@@ -1,0 +1,37 @@
+# sqlhomeworks
+use MyDatabase
+Create table eighttable(EmployeeID int ,Name varchar(50),	Job	varchar(40),ManagerID int,country varchar (40))
+insert into eighttable values(63679,	'SANDRINE',	'CLERK',	69062,'America'),(64989	,'ADELYN',	'SALESMAN',	66928,'america'),(65271,	'WADE',	'SALESMAN',	66928,'America'),(65646	,'JONAS',	'MANAGER',	68319,'America'),(66564,	'MADDEN',	'SALESMAN',	66928,'Canada')
+select * from eighttable
+
+use MyDatabase
+create table tenthtable(Rank int,	Name varchar(39),	Age int,	Wealth int,	WealthPerYear int)
+insert into tenthtable values(1	,'BernardArnault'	,74	,211,	3),(2	,'ElonMusk',	51,	212,	4),(3,	'JeffBezos',	59	,213,4),(4	,'LarryEllison',	78	,214,3),(5	,'WarrenBuffett',	92,	215,2)
+select * from tenthtable
+
+use MyDatabase
+create table ninethtable(ID int,	Name	varchar(40),Price int,	Company varchar(50),country varchar(49))
+insert into ninethtable values(101,	'MotherBoard',3200,15,'newZealand'),(102,	'KeyBoard',450,	16,'Usa'),(103,'ZIPdrive',250,14,'Uk'),(104	,'Speaker'	,550,	16,'France'),(105,	'Monitor'	,5000,	11,'usa')
+select * from ninethtable
+Use MyDatabase
+Create table Fouthtable(EmployeeID int,EmployeeNAME varchar(40),Department varchar(40),Salary int, Bonus int, TotalPay int)
+insert into Fouthtable values(101,'John Doe','HR',50000,2000,52000),(102,'JaneSmith','Marketing',55000,2500,57500),(103,'BobJohnson','IT',60000,3000,63000)
+insert into Fouthtable values(104,'Sarah Lee','Finance',65000,3500,685000),(105,'Tom Davis','HR',70000,4000,74000)
+
+select * from Fouthtable
+use MyDatabase
+create table Fifthtable(ID int,	Title varchar(40),RunTime int,	Genre varchar(50),	Director varchar (50))
+insert into Fifthtable values (1,'Jurassic Park',	126	,'Adventure','Steven&Spielberg')
+insert into Fifthtable values (2,'Spider&Man',121,'Action','Sam&Raimi'),(3,'King-Kong',187,'Adventure','Peter-Jackson'),(5,'Superman-Returns',154	,'Action',	'Bryan-Singer')
+insert into Fifthtable values (6,'Titanic',	194	,'Romance'	,'James&Cameron')
+
+drop table Fifthtable
+
+
+select * from Fifthtable
+
+use MyDatabase
+create table sixthtable(id int,	Name varchar(50),Age int,	Gender varchar(50),	Occupation varchar(70))
+insert into sixthtable values(123,'JohnSmith',35,	'Accountant'	,'Software&Eng'),(44,'Jane&UDoe',42	,'HR'	,'Data&Scientist'),(53,'Bob&Johnson'	,28	,'Accountant','Accountant'),(56,	'Emily&Chen'	,25	,'HR'	,'HR'),(6	,'Lily&Chen',	33,	'HR'	,'Engineer')
+
+select * from sixthtable
