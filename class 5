@@ -1,0 +1,152 @@
+--1
+select salesman_id ,name ,'salesman' from Inventory.Salesman
+where city='London'
+
+union
+
+select customer_id,cust_name,'Customer' from Inventory.Customer
+where city='London'
+--2
+select salesman_id ,city from Inventory.Salesman
+union
+select salesman_id ,city from Inventory.Customer
+--3
+select salesman_id ,customer_id  from Inventory.Orders
+union
+select salesman_id ,customer_id from Inventory.Customer
+--4-8,9  o'tilmagan mavzudan ekn
+--8
+select customer_id ,city,grade,'HIGH Rating' from Inventory.Customer
+where grade>=300
+union
+select customer_id,city,grade,'Low rating' from Inventory.Customer
+where grade<300
+
+
+--1
+select full_name from users
+union
+select full_name from clients
+--2
+select order_date date from orders
+except
+select payment_date from payments
+union
+(select payment_date from payments
+except
+select order_date date from orders)
+
+--3
+select email from users
+except
+select  email from employees
+union
+(select email from employees
+except
+select  email from users)
+
+--4
+select city from clients
+except
+select city from suppliers
+union
+(select city from suppliers
+except
+select city from clients)
+--5
+select name from employees
+except 
+select name from managers
+union 
+(select name from managers
+except
+select name from employees)
+--6
+select  product_name from products
+union 
+select service_name from services
+--7
+select address from students
+union
+select address from teachers
+--8
+select title from movies
+union
+select title from books
+--9
+select transport_type from public_transport
+union
+select transport_type from private_transport
+--10
+select process_name from processes
+union 
+select event_name from events
+--11
+select email from users
+intersect
+select email from employees
+--12
+select city from clients
+intersect
+select city from suppliers
+--13
+select order_date from orders
+intersect
+select payment_date from payments
+--14
+select full_name from users
+intersect
+select full_name from clients
+
+--15
+select name from students
+intersect
+select name from teachers
+--16
+select email from users
+except 
+select email from employees
+--17
+select city from clients
+except
+select city from suppliers
+--18
+select order_date from orders
+except
+select payment_date from payments
+--19
+select full_name from users
+except 
+select full_name from clients
+--20
+select name from students
+except
+select name from teachers
+--21
+select * ,case when order_amount>=350 then 'High' 
+                when order_amount>=200 then 'Medium' else 'low'end from orders
+--22
+select * ,case when score>90 then 5
+           when score>80 then 4 else 3 end from students
+--23
+select * ,case when salary >=60000 then 'Above average'
+            when salary >=55000 then 'average'
+			when salary >=50000 then 'below average' end as Salary0 from employees
+--24
+select * ,case when price >=800 then '15%'
+           when price >=600 then '10%'
+		   when price <=300 then 'Chegirma berilmaydi'end from  products
+--25
+select *,case when release_year >=2023 then 'Upcoming'
+               when release_year>=2010 then 'modern'
+			   when release_year<=1999 then 'classic' end from movies
+--26
+select *, iif(order_amount>=100 ,'High','low') from orders
+--27
+select *,iif (attendance >=80,'Satisfactory','Unsatisfactory') as rate from students
+--28
+select * ,iif(order_amount>300 ,'12%',Iif(order_amount>=200,'14%','70%')) from orders
+--29
+select *, Iif(process_name ='Shipping','Complete','Pending') from processes
+--30
+select * ,iif(order_amount >=350 ,'Out of stock','in stock')from orders 
