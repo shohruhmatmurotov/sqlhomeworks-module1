@@ -1,0 +1,25 @@
+1.select first_name ||''|| last_name As Full_name,salary from employees
+where salary <6000
+
+2.Select First_name ,Last_name,Deparment_id,Salary 
+from employees
+where Salary >8000
+
+3.Select First_name,Last_name,Deparment_id
+from employees
+where Last_name='McEwen'
+
+4.select *
+from employees
+where Deparment_id  is null
+
+5.select * from departments
+where department_name='Marketing'
+
+6.select first_name ||''|| last_name as full_name ,hire_date,salary,deparment_id from employees
+where first_name not like '%M%'
+order by department_id
+
+7.select * from employees
+where Salary between 8000 and 12000 and commission_pct is not null   hire_date <'1987-06-05' an deparment_id  not like 40 or 120 or 70  
+
