@@ -1,0 +1,32 @@
+use myhome
+
+create table iam_members(db_id int primary key ,name varchar(max))
+
+create table iam_policies(db_id int primary key ,id varchar(max),name varchar(max),type varchar(max))
+
+create table  iam_roles(db_id int  primary key ,id varchar(max) ,name varchar(max),type varchar(max),actions text )
+
+create table iam_policy_members(member_id int,policy_id int primary key(member_id ,policy_id)
+constraint fk_iampolicymembers foreign key(member_id) references iam_members(db_id),
+constraint fk_iampolicyid foreign key (policy_id ) references iam_policies(db_id))
+
+
+create table iam_statements(db_id  int primary key ,effect varchar(max),actions text,resources text,policy_id int foreign key references iam_policies(db_id),rol_id int foreign key references iam_roles(db_id))
+
+create table iam_role_projects(role_id int foreign key references iam_roles(db_id),project_id int foreign key references iam_projects(db_id),constraint pk_roleprojects primary key (role_id,project_id ))
+
+create table iam_projects(db_id int primary key,id varchar(max),name varchar(max),type varchar(max))
+
+create table iam_statement_projects(project_id int foreign key references iam_projects(db_id),statement_id int foreign key references iam_statements(db_id),constraint pk_projects primary key(project_id,statement_id))
+
+create table iam_policy_projects(policy_id int foreign key references iam_policies(db_id),project_id int foreign key references iam_projects(db_id),constraint pk_policy primary key (policy_id ,project_id ))
+
+create  table iam_projects_graveyard(db_id int primary key ,id varchar(max))
+
+create table iam_staged_project_rules(db_id int primary key ,id varchar(max),name varchar(max),type varchar(max),deleted bit ,project_id int foreign key references iam_projects(db_id))
+
+create table iam_project_rules(db_id int primary key,id varchar(max),name varchar(max),type varchar(max),project_id int foreign key references iam_projects (db_id))
+
+create table iam_staged_rule_conditions(rule_db_id int foreign key references iam_staged_project_rules(db_id),value text,attribute varchar(max),operator varchar(max))
+
+create table iam_rule_conditions(rule_db_id int foreign key references iam_project_rules(db_id),value text,attribute varchar(max),operator varchar(max))
