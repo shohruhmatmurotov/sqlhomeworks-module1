@@ -1,0 +1,203 @@
+---aggregate functions
+--1
+select sum(purch_amt) from Inventory.Orders
+--2
+select avg(purch_amt) from Inventory.Orders
+--3
+select count(distinct salesman_id) from Inventory.Orders
+--4
+select count(distinct customer_id ) from Inventory.Customer
+--5
+select count(all grade ) from Inventory.Customer
+--6
+select max(purch_amt) from Inventory.Orders
+--7
+select min (purch_amt) from Inventory.Orders
+--8
+select max(grade) ,city from Inventory.Customer
+group by city
+order by city
+--9
+select customer_id ,max(purch_amt) as max from Inventory.Orders
+group by customer_id
+order by max desc
+--10
+select customer_id,ord_date,max(purch_amt) as max from Inventory.Orders
+group by customer_id,ord_date
+--11
+select salesman_id ,max(purch_amt) from Inventory.Orders
+where ord_date ='2012-08-17'
+group by salesman_id
+--12
+select customer_id ,ord_date ,max(purch_amt) as max from Inventory.Orders
+group by customer_id,ord_date 
+having max(purch_amt)>2000
+--13
+select customer_id ,ord_date ,max(purch_amt) as max from Inventory.Orders
+group by customer_id,ord_date 
+having max(purch_amt) between 2000 and 6000
+--14
+select customer_id ,ord_date ,max(purch_amt) as max from Inventory.Orders
+group by customer_id,ord_date 
+having max(purch_amt) in (2000,3000,5760)
+--15
+select customer_id , max(purch_amt) as max from Inventory.Orders
+where customer_id between 3002 and 3007 
+group by customer_id
+--16
+select customer_id , max(purch_amt) as max from Inventory.Orders
+where customer_id between 3002 and 3007 
+group by customer_id
+having max(purch_amt)>1000
+--17
+select salesman_id,max(purch_amt)  from Inventory.Orders
+where salesman_id between 5003 and 5008
+group by salesman_id
+--18
+select count(ord_no) from Inventory.Orders
+where ord_date='2012-08-17'
+--19
+select count(salesman_id) from Inventory.Customer
+--20
+select ord_date ,salesman_id,count(ord_no) from Inventory.Orders
+group by ord_date ,salesman_id
+--21
+select avg(pro_price) from item_mast
+--22
+select count(pro_name) from item_mast
+where pro_price >=350
+--23
+select avg(pro_price) as [avgerage price] ,pro_com  from item_mast
+group by pro_com
+--24
+select sum(dpt_allotment) as sum from emp_department
+--25
+select emp_dept ,count(emp_idno) as count from emp_details
+group by emp_dept
+----------joins on movies database
+--1
+select distinct rev_name from Movies.Reviewer as r
+join Movies.Rating as mr 
+on r.rev_id=mr.rev_id
+where rev_stars is null
+--2
+select act_fname,act_lname,role from Movies.Actor as a
+  join Movies.Movie_cast as c
+on a.act_id=c.act_id
+ join Movies.Movie as m
+on m.mov_id=c.mov_id
+where  mov_title='Annie Hall'
+--3
+select  distinct dir_fname,dir_lname,mov_title from Movies.Director as d
+join Movies.Movie_Direction as md on d.dir_id=md.dir_id
+join Movies.Movie_cast as mc on md.mov_id=mc.mov_id
+join Movies.Movie as m  on m.mov_id=mc.mov_id
+where mov_title='Eyes Wide Shut'
+--4
+select  distinct dir_fname,dir_lname,mov_title from Movies.Director as d
+join Movies.Movie_Direction as md on d.dir_id=md.dir_id
+join Movies.Movie_cast as mc on md.mov_id=mc.mov_id
+join Movies.Movie as m  on m.mov_id=mc.mov_id
+where role='Sean Maguire'
+--5
+select distinct act_fname, act_lname, mov_title , mov_year from Movies.Actor as a
+join Movies.Movie_cast as c on a.act_id=c.act_id
+join movies.Movie as m  on c.mov_id=m.mov_id
+where mov_year between 1990 and 2000
+--6
+select dir_fname,dir_lname,count(gen_title) as number_genres from Movies.Director as d
+join Movies.Movie_Direction as  md on d.dir_id=md.dir_id
+join Movies.Movie_Genres as g on md.mov_id=g.mov_id
+join Movies.Genres as ge on g.gen_id=ge.gen_id
+group by dir_fname,dir_lname
+having count(gen_title)>1
+--7
+select  distinct mov_title,mov_year,gen_title from Movies.Movie as m join Movies.Movie_Genres as mg on mg.mov_id=m.mov_id
+join Movies.Genres as g on mg.gen_id=g.gen_id
+--8
+select   distinct mov_year,  gen_title,  dir_fname+' '+ dir_lname as full_name  from Movies.Movie as m join Movies.Movie_Genres as mg on m.mov_id=mg.mov_id
+join Movies.Genres as g on mg.gen_id=g.gen_id
+join Movies.Movie_Direction as md on md.mov_id=mg.mov_id
+join Movies.Director as d on md.dir_id=d.dir_id
+--9
+select  distinct mov_title,mov_dt_rel,mov_time,dir_fname,dir_lname from Movies.Movie as m join Movies.Movie_Direction as md on m.mov_id=md.mov_id
+join Movies.Director as d on d.dir_id=md.dir_id
+where mov_dt_rel<'1989-01-01'
+--10
+select gen_title,avg(mov_time),count(gen_title) from Movies.Movie as m join Movies.Movie_Genres as mg on m.mov_id=mg.mov_id
+join movies.Genres as g on g.gen_id=mg.gen_id
+group by gen_title
+--11
+select distinct  mov_title,mov_year,dir_fname,dir_lname,act_lname,act_fname,role  from Movies.Movie_Direction as md join Movies.Movie as m on md.mov_id=m.mov_id
+join Movies.Director as d on  md.dir_id=d.dir_id 
+join Movies.Movie_cast as mc on mc.mov_id=md.mov_id
+join Movies.Actor as a on mc.act_id=a.act_id
+where mov_time=(select min(mov_time )from Movies.Movie )
+--12
+select distinct mov_year from Movies.Movie as m 
+join Movies.Rating as r on m.mov_id=r.mov_id
+where rev_stars in (3,4)
+--13
+select  distinct rev_name,mov_title,rev_stars from Movies.Movie as m join Movies.Rating as r on m.mov_id=r.mov_id
+join Movies.Reviewer as rw on rw.rev_id=r.rev_id
+--14
+select mov_title, max(rev_stars) as max from Movies.Movie as m join Movies.Rating as r on m.mov_id=r.mov_id
+where num_o_ratings is not null
+group by mov_title
+--15
+select distinct mov_title,dir_lname, dir_lname,rev_stars from Movies.Movie as m join movies.Rating as r on m.mov_id=r.mov_id
+join movies.Movie_Direction as md on r.mov_id=md.mov_id
+join movies.Director as d on d.dir_id=md.dir_id
+--16
+select  mov_title,  act_fname,act_lname,role  from Movies.Movie as m join movies.Movie_cast as mc on m.mov_id=mc.mov_id
+join movies.Actor as a on mc.act_id=a.act_id
+where a.act_id in( select act_id from movies.Movie_cast group by act_id having count(*) >=2)
+---17
+select  distinct dir_fname,dir_lname,mov_title,act_fname,act_lname,role  from Movies.Movie as m join movies.Movie_cast as mc on m.mov_id=mc.mov_id
+join movies.Actor as a on a.act_id=mc.act_id
+join movies.Movie_Direction as md on md.mov_id=mc.mov_id
+join movies.Director as d on d.dir_id=md.dir_id
+where act_fname='Claire' and act_lname='Danes'
+--18
+select  distinct mov_title,act_fname,act_lname,role  from Movies.Movie as m join movies.Movie_cast as mc on m.mov_id=mc.mov_id
+join movies.Actor as a on a.act_id=mc.act_id
+join movies.Movie_Direction as md on md.mov_id=mc.mov_id
+join movies.Director as d on d.dir_id=md.dir_id
+where act_fname=dir_fname and act_lname=dir_lname
+--19
+select mc.*  from Movies.Movie as m join movies.Movie_cast as mc on m.mov_id=mc.mov_id
+join movies.Actor as a on a.act_id=mc.act_id
+where mov_title='Chinatown'
+--20
+select distinct mov_title  from Movies.Movie as m join movies.Movie_cast as mc on m.mov_id=mc.mov_id
+join movies.Actor as a on a.act_id=mc.act_id
+where act_fname='Harrison' and act_lname='Ford'
+---21
+select  distinct mov_title,mov_year,rev_stars,mov_rel_country from movies.Movie as m join movies.Rating as r on m.mov_id=r.mov_id
+where rev_stars=(select max(rev_stars) from movies.Rating )
+--22
+select mov_title,mov_year ,rev_stars from Movies.movie as m join movies.Movie_Genres as mg on mg.mov_id=m.mov_id
+join movies.Genres as g on g.gen_id=mg.gen_id 
+join movies.Rating as r on r.mov_id=mg.mov_id
+WHERE gen_title = 'Mystery' 
+ AND rev_stars >= ALL (
+    SELECT rev_stars
+    FROM movies.Rating 
+join movies.Genres as g1 on g1.gen_id=mg.gen_id 
+join movies.Rating as r1 on r1.mov_id=mg.mov_id
+    WHERE gen_title = 'Mystery'
+)
+--23
+select mov_year,gen_title,count(gen_title),avg(rev_stars) from Movies.movie as m join movies.Movie_Genres as mg on mg.mov_id=m.mov_id
+join movies.Genres as g on g.gen_id=mg.gen_id 
+join movies.Rating as r on r.mov_id=mg.mov_id
+    WHERE gen_title = 'Mystery'
+	group by mov_year,gen_title
+	--24
+select distinct mov_title,act_fname,mov_year,role,gen_title,dir_fname,dir_lname,mov_dt_rel,rev_stars from Movies.movie as m join movies.Movie_Genres as mg on mg.mov_id=m.mov_id
+join movies.Genres as g on g.gen_id=mg.gen_id 
+join movies.Rating as r on r.mov_id=mg.mov_id
+join movies.Movie_Direction as md on r.mov_id=md.mov_id
+join movies.Movie_cast as mc on mc.mov_id=md.mov_id
+join movies.Director as d on d.dir_id=md.dir_id
+join movies.Actor as a on mc.act_id=a.act_id
