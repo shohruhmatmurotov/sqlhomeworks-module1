@@ -1,0 +1,116 @@
+go
+
+select * from HR.Employees
+--1.
+select first_name+''+last_name as Full_name ,salary from Hr.Employees
+where salary <6000
+--2.
+select first_name, last_name,department_id ,salary from Hr.Employees
+where salary >8000
+--3
+select first_name ,last_name,department_id from Hr.Employees
+where last_name ='Mcewen'
+--4
+select * from Hr.Employees
+where department_id is null
+--5
+select * from Hr.Departments
+where department_name='Marketing'
+--6
+select first_name+ ' '+ last_name as Full_name ,hire_date,salary,department_id from Hr.Employees
+where first_name not like '%m%'
+order by department_id  
+--7
+select * from hr.Employees
+where salary between 8000 and 12000 and hire_date >'1987-06-05' and department_id  not in ( 40 ,120 , 70 )
+and commission_pct=0
+--8
+select first_name +' '+last_name as full_name,salary from hr.Employees
+where commission_pct is null
+--9
+select first_name +' '+last_name as full_name ,phone_number ,salary from hr.Employees
+where salary between 9000 and 17000
+--10
+select first_name ,last_name  ,salary from hr.Employees
+where first_name like '%m'
+--11
+select  first_name +' '+last_name as full_name ,salary from hr.Employees
+where salary not between 7000 and 15000
+order by first_name +' '+last_name  
+--12
+select  first_name +' '+last_name as full_name ,job_id,hire_date from hr.Employees
+where hire_date between '2007-11-05' and '2009-07-05'
+--13
+select  first_name +' '+last_name as full_name ,department_id from HR.Employees
+where department_id=70 or department_id= 90
+--14
+select  first_name +' '+last_name as full_name ,salary ,manager_id from hr.Employees
+where manager_id<>0
+--15
+select * from hr.Employees
+where hire_date< '2002-06-21'
+--16
+select * from hr.Employees
+where manager_id in (120,103,145)
+--17
+select * from hr.Employees
+ where first_name like '%d%'
+or  first_name like'%s%'
+ or  first_name like'%n%'
+order by salary desc
+--18
+select * from hr.Employees
+where salary >11000 and phone_number like '______3%'
+order by first_name desc
+--19
+select last_name ,first_name,department_id from hr.Employees
+where first_name like '__s%'
+--20
+select employee_id ,first_name,job_id, department_id from hr.Employees
+where department_id not in (50,30,80)
+--21
+select employee_id ,first_name,job_id, department_id from hr.Employees
+where department_id  in (30,40,90)
+--22
+select  employee_id 
+from  hr.Job_History
+select * from hr.Job_History
+--23
+------------------------------
+--1
+select * from Inventory.Salesman
+where city in('Paris' , 'Rome')
+--2
+select * from Inventory.Salesman
+where city in('Paris' , 'Rome')
+--3
+select * from Inventory.Salesman
+where city not in ('Paris','Rome')
+--4
+select * from Inventory.Customer
+where customer_id in (3007,3008,3009)
+--5
+select salesman_id,name, city,commission from Inventory.Salesman
+where commission between 0.12 and 0.14
+--6
+select * from Inventory.Orders
+where purch_amt between 500 and 4000
+--7
+select salesman_id,name,city,commission from Inventory.Salesman
+where name like '[A-L]%'
+--8
+select salesman_id ,name,city,commission from Inventory.Salesman
+where name not between 'A' and 'L'
+--9
+select customer_id ,cust_name,city, grade,salesman_id from Inventory.Customer
+where cust_name like 'B%'
+order by customer_id desc
+--10
+select customer_id ,cust_name,city,grade,salesman_id from Inventory.Customer
+where cust_name like '%n'
+order by customer_id desc
+--11
+select salesman_id,name,city,commission from Inventory.Salesman
+where name like 'n_i%'
+order by salesman_id
+--12
