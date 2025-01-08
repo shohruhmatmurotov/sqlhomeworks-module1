@@ -1,0 +1,128 @@
+--- sort filter on hr database
+--1
+use W3Resource
+select first_name+' ' +last_name as full_name,salary  from hr.Employees
+where salary<6000
+--2
+select first_name,last_name,department_id,salary from hr.Employees
+where salary >8000
+--3
+select first_name,last_name,department_id from hr.Employees
+where last_name='McEwen'
+--4
+select employee_id, first_name,last_name,department_id,email,phone_number,hire_date,job_id,salary,commission_pct,manager_id,department_id from hr.Employees
+where department_id=0
+--5
+select *from hr.Departments
+where department_name='Marketing'
+--6
+select * from hr.Employees
+where first_name not like '%M%'
+--7
+select * from hr.Employees
+where salary between 8000 and 12000 and commission_pct is not null and department_id not in (40,120,70) and hire_date >'1987-06-05'  
+--8
+select first_name+' '+last_name as full_name ,salary from hr.Employees
+where commission_pct=0
+--9
+select first_name+' '+last_name as full_name ,phone_number,   salary from hr.Employees
+where salary between 9000 and 17000
+---10
+select first_name ,last_name  from hr.Employees
+where first_name like '%_m'
+--11
+select first_name +' ' +last_name as full_name ,salary from hr.Employees
+where salary not between 7000 and 15000
+--12
+select first_name +' ' +last_name as full_name ,job_id,hire_date  from hr.Employees
+where hire_date between '2007-11-05' and '2009-07-05'
+--13
+select first_name +' ' +last_name,department_id as full_name ,job_id,hire_date  from hr.Employees
+where department_id=70 or department_id=90
+--14
+select first_name+' '+last_name as full_name ,salary ,manager_id   from hr.Employees
+where manager_id is not null
+--15
+select * from hr.Employees
+where hire_date <'2002-06-21'
+--16
+select first_name,last_name,email,salary ,manager_id from hr.Employees
+where manager_id in  (120,103,145)
+---17
+select * from hr.Employees
+where first_name like '[D-S-N]%'
+order by salary desc
+--18
+select first_name+' '+last_name as full_name,hire_date,commission_pct,email,first_name+'-'+phone_number as telephone_number from hr.Employees
+where salary> 11000 or phone_number like '______3%'
+order by first_name desc
+--19
+select first_name,last_name,department_id from  hr.Employees
+where first_name like '__s%'
+--20
+select employee_id,first_name,job_id,department_id from hr.Employees
+where department_id not in (50,30,80)
+--21
+select employee_id,first_name,job_id,department_id from hr.Employees
+where department_id in (30,40,90)
+--22
+select employee_id from hr.Job_History
+group by employee_id
+having count(employee_id)>=2
+--23
+select job_id,count(employee_id)as number_employee,sum(salary) as sum_salary,max(salary)-min(salary) as difference_in_salary  from hr.Employees
+group by job_id
+--24
+select job_id from hr.Job_History
+where  year(end_date)-year(start_date)  >1
+group by job_id
+having count(*)>=2
+
+--25
+select country_id,count(city) from hr.Locations
+group by country_id
+--26
+select manager_id,count(employee_id) as the_number_of_workers_per_manager from hr.Employees
+group by manager_id
+--27
+select * from hr.Jobs
+order by job_title desc
+--28
+select first_name,last_name,hire_date from hr.Employees
+where job_id in ('sa_man','sa_rep')
+--29
+select department_id,avg(salary) from hr.Employees
+where commission_pct is not null
+group by department_id
+--30
+select  distinct department_id from hr.Employees
+where manager_id in (select manager_id from hr.Employees 
+group by manager_id
+having count(employee_id)>=4)
+--31
+select department_id from hr.Employees
+where commission_pct is not null
+group by department_id
+having count(employee_id)>=10
+--32
+select employee_id ,max(end_date) as max from hr.Job_History
+group by employee_id
+--33
+select* from hr.Employees
+where commission_pct is null and salary between 7000 and 12000  and department_id=50
+--34
+select job_id ,avg(salary) from hr.Employees
+group by job_id
+having avg(salary)>8000
+--35
+select job_title,max_salary,min_salary from hr.Jobs
+where max_salary between 12000 and 18000
+--36
+select first_name ,last_name from hr.Employees
+where first_name like 'd%' or last_name like 'd%'
+--37
+select * from hr.Jobs
+where min_salary>9000
+--38
+select * from hr.Employees
+where hire_date>'1987-09-07'
