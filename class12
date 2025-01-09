@@ -1,0 +1,3 @@
+select dateadd(day,-datepart(day,getdate())   ,dateadd(MONTH,1,getdate())) --last day of month
+
+select dateadd(day,1,dateadd(day,-day(getdate()),getdate()))---first day of month
