@@ -1,0 +1,115 @@
+--1
+select * from inventory.Orders
+where salesman_id=(select salesman_id from Inventory.Salesman where name='Paul Adam' )
+--2
+select * from Inventory.Salesman 
+where salesman_id in(select salesman_id from Inventory.Orders where city='London')
+--3
+select * from Inventory.Orders 
+where salesman_id=(select salesman_id from Inventory.Orders where customer_id=3001)
+--4
+select * from Inventory.Orders
+where purch_amt >=(select avg(purch_amt) from inventory.orders where ord_date='2012-10-10')
+--5
+select * from Inventory.Orders
+where salesman_id in (select salesman_id from Inventory.Salesman
+where city='New york')
+--6
+select commission from Inventory.Salesman where salesman_id in(select salesman_id from Inventory.Customer where city='Paris')
+--7
+select * from Inventory.Customer where customer_id in (select salesman_id=2001 from  Inventory.Salesman where name='Mc lyon')
+--8
+select count(*),grade from Inventory.Customer
+group by grade
+having grade>= (select avg(grade) from Inventory.Customer where city='new york '
+)
+--9
+select * from Inventory.Orders where salesman_id=(select salesman_id from Inventory.Salesman
+where commission=(select max(commission) from Inventory.Salesman))
+--10
+select b.*,a.cust_name from Inventory.Orders b,Inventory.Customer a
+where a.customer_id=b.customer_id and b.ord_date='2013-08-17'
+--11
+select * from Inventory.Salesman where salesman_id in (select salesman_id from Inventory.Customer where (select count(customer_id) from Inventory.Customer)>=1)
+--12
+select * from Inventory.Orders o join Inventory.Customer as c on o.customer_id=c.customer_id
+where purch_amt>(select avg(purch_amt) from Inventory.Orders)
+--13
+select * from Inventory.Orders o join Inventory.Customer as c on o.customer_id=c.customer_id
+where purch_amt>=(select avg(purch_amt) from Inventory.Orders)
+--14
+select ord_date, sum(purch_amt) from Inventory.Orders
+group by ord_date
+having  sum(purch_amt)>(select max(purch_amt)+1000 from Inventory.Orders)
+--15
+select customer_id,cust_name,city from Inventory.Customer
+where exists(select * from inventory.Customer where city='London')
+--16
+select * from Inventory.Salesman where salesman_id in (select salesman_id from Inventory.Customer group by salesman_id having count(customer_id)>1) 
+--17
+select * from Inventory.Salesman where salesman_id in (select salesman_id from Inventory.Customer group by salesman_id having count(customer_id)=1) 
+--18
+select  salesman_id,name,city,commission from Inventory.Salesman
+where salesman_id in (select salesman_id from Inventory.Orders group by salesman_id having count(ord_no)>1)
+--19
+select * from Inventory.Salesman where city =any(select city from Inventory.Customer)
+--20
+select * from Inventory.Salesman where city in (select city from Inventory.Customer)
+--21
+select * from Inventory.Salesman b
+join Inventory.Customer c on b.salesman_id=c.salesman_id and c.cust_name>b.name
+--22
+select * from Inventory.Customer 
+where grade >any(select grade from inventory.Customer where city<'new york')
+--23
+select * from Inventory.Orders 
+where purch_amt>any(select purch_amt from Inventory.Orders where ord_date='2012-09-10')
+--24
+select * from Inventory.Orders 
+where purch_amt<any(select purch_amt from Inventory.Orders where customer_id in (select customer_id from Inventory.Customer where city='london' ))
+--25
+select * from Inventory.Orders 
+where (select max(purch_amt) from Inventory.Orders o,Inventory.Customer b where o.customer_id=b.customer_id and city='london') >purch_amt
+--26
+select * from Inventory.Customer
+where grade>all(select grade from Inventory.Customer where city='New York')
+--27
+select sum(purch_amt),s.city ,name from Inventory.Orders as o join Inventory.Salesman as s on o.salesman_id=o.salesman_id
+join Inventory.Customer as c on o.salesman_id=c.salesman_id
+where s.city=c.city
+group by name ,s.city
+--28
+select * from Inventory.Customer where grade<>all(select grade from Inventory.Customer where city='london')
+--29
+select * from Inventory.Customer where grade<>all(select grade from Inventory.Customer where city='paris')
+--30
+select * from Inventory.Customer where grade<>any(select grade from Inventory.Customer where city='paris')
+--31
+select pro_name,avg(pro_price) as avarage_price from item_mast
+group by pro_name
+--32
+select pro_name,avg(pro_price) as avarage_price from item_mast
+group by pro_name
+having avg(pro_price)>=350
+--33
+select pro_name ,max(pro_price) as max from item_mast
+group  by pro_name
+--34
+select * from emp_details
+where emp_lname='Gabriel' or emp_lname='Dosio'
+--35
+select * from emp_details
+where emp_dept=89 or emp_dept=63
+--36
+select * from emp_department
+where dpt_allotment>50000
+--37
+select * from emp_department
+where dpt_allotment>(select avg(dpt_allotment) from emp_department)
+--38
+select dpt_name from emp_department
+where dpt_code in (select emp_dept from emp_details group by emp_dept having count(*)>2)
+--39
+select emp_fname,emp_lname from emp_details where emp_dept in (
+select dpt_code from emp_department
+where dpt_allotment =(select min(dpt_allotment) from emp_department where dpt_allotment>(select min(dpt_allotment) from emp_department)))
