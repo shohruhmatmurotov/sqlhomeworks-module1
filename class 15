@@ -1,0 +1,178 @@
+
+select * from Hierarchy
+
+select * from PostDef;
+
+go
+with hierarchy1 as (select id ,name,manager_id,manager,0 as level from Hierarchy 
+where manager_id is null
+union all
+select h.id,h.name,h.manager_id ,h.manager,v.level+1 as level from Hierarchy as h
+join hierarchy1 as v  on h.manager_id=v.id )
+select id,name,manager_id,manager,definition from hierarchy1 as h
+left join PostDef as d on h.level=d.postid
+--1
+select first_name,last_name from hr.Employees 
+where salary >(select salary from hr.Employees where employee_id=163)
+--2
+select first_name,last_name,department_id,job_id from hr.Employees
+where job_id=(select job_id from hr.Employees where employee_id=169)
+--3
+select first_name,last_name,department_id,salary from hr.Employees
+where salary in (select min(salary) from hr.Employees group by department_id)
+--4
+select employee_id, first_name,last_name from hr.Employees
+where salary >(select avg(salary) from hr.Employees)
+--5
+select employee_id, first_name,last_name from hr.Employees
+where manager_id=(select employee_id from hr.Employees where first_name='Payam')
+--6
+select * from hr.Employees e left join hr.Departments d on e.department_id=d.department_id
+where department_name='finance'
+--7
+select * from hr.Employees 
+where salary=3000 and manager_id=121
+--8
+select * from hr.Employees
+where employee_id in (134,159,183)
+--9
+select * from hr.Employees
+where salary between 1000 and 3000
+--10
+select * from hr.Employees
+ where salary between (select min(salary) from hr.Employees ) and 2500
+ --11
+ select * from hr.Employees where department_id not in (select department_id from hr.Employees where manager_id between 100 and 200)
+ --12
+ select * from hr.Employees 
+ where salary in (select  top 1 max(salary) from hr.Employees group by employee_id having max(salary)<>(select max(salary) from hr.Employees) )
+ --13
+ select * from hr.Employees
+ where department_id in (select department_id from hr.Employees where first_name='Clara' )and first_name<>'Clara'
+ --14
+ select employee_id,first_name,last_name from hr.Employees
+ where department_id in (select department_id from hr.Employees where first_name like 'T%')
+ --15
+  select employee_id,first_name,last_name from hr.Employees
+ where department_id in (select department_id from hr.Employees where first_name like '%T%') and salary>(select avg(salary) from hr.Employees)
+ --16
+ select * from hr.Employees as e left join hr.Departments as d on e.department_id=d.department_id
+ left join hr.Locations as l on l.location_id=d.location_id
+ where city='Toronto'
+ --17
+ select * from hr.Employees 
+ where salary <any(select salary from hr.Employees where job_id='MK_MAN')
+ --18
+  select * from hr.Employees 
+ where salary <any(select salary from hr.Employees where job_id='MK_MAN')
+and job_id<>'MK_MAN'
+--19
+  select * from hr.Employees 
+ where salary >any(select salary from hr.Employees where job_id='pu_man')
+and job_id<>'pu_man'
+--20
+select employee_id,first_name,last_name,job_id from hr.Employees
+where salary>all(select avg(salary) from hr.Employees group by department_id)
+--21
+select first_name,last_name,department_id from hr.Employees where exists(select * from hr.Employees
+where salary >3700)
+--22
+select department_id,sum(salary),count(employee_id) from hr.Employees
+group by department_id
+having count(employee_id)>1
+--23
+select employee_id, CONCAT(first_name,' ',last_name),case when job_id='st_man' then 'salesman'
+                                                      when job_id= 'it_prog' then 'developer'else job_id end     from hr.Employees
+--24
+select employee_id, CONCAT(first_name,' ',last_name),case when salary>(select avg(salary) from hr.Employees) then 'High' else 'low' end as salarystatus
+                                                                 from hr.Employees
+--25
+select employee_id, CONCAT(first_name,' ',last_name),salary,case when salary>(select avg(salary) from hr.Employees) then 'High' else 'low' end as salarystatus,cast((select salary-(select avg(salary) from hr.Employees )) as decimal(10,2)) as avgcompare
+                                                                 from hr.Employees
+--26
+select  distinct department_name  from hr.Employees e,hr.Departments as d
+where e.department_id=d.department_id and  1<any(select count(employee_id ) from hr.Employees group by department_id)
+--27
+select first_name from hr.Employees
+where department_id in (select department_id from hr.Departments where location_id in (select location_id from hr.Locations where country_id in (select country_id from hr.Countries where country_name='United Kingdom')))
+--28
+select last_name from hr.Employees where salary>(select avg(salary) from hr.Employees) and department_id in (select department_id from hr.Departments where department_name like 'IT %')
+--29
+select first_name ,last_name,salary from hr.Employees
+where salary>(select salary from hr.Employees where last_name='Ozer')
+--30
+select first_name,last_name from hr.Employees where manager_id in (select employee_id from hr.Employees where department_id in (select department_id from hr.Departments where location_id in (select location_id from hr.Locations where country_id='US')))
+--31
+select first_name,last_name from hr.Employees as e
+where salary>(select sum(salary)*0.5 from hr.Employees as e1 where e.department_id=e1.department_id)
+--32
+select * from hr.Employees where employee_id in (select manager_id from hr.Employees)
+--33
+select * from hr.Employees where employee_id in (select manager_id from hr.Departments)
+--34
+select * from hr.Employees
+where salary=(select max(salary) from hr.Employees) and hire_date between '2002-01-01' and '2003-12-31'
+--35
+select department_id,department_name from hr.Departments
+where location_id in (select location_id from hr.Locations where city='london')
+--36
+select first_name,last_name,salary,department_id from hr.Employees
+where salary>(select avg(salary) from hr.Employees)
+--37
+select first_name,last_name,department_id from hr.Employees
+where salary>all(select salary from hr.Employees where department_id=40)
+--38
+select department_name,department_id from hr.Departments
+where location_id=(select location_id from hr.Departments where department_id=30)
+--39
+select first_name,last_name,salary,department_id from hr.Employees
+where department_id=(select department_id from hr.Employees where employee_id=201)
+--40
+select * from hr.Employees
+where salary in (select salary from hr.Employees where department_id=40)
+--41
+select first_name,last_name,department_id from hr.Employees
+where department_id = (select department_id from hr.Departments where department_name='Marketing')
+--42
+select first_name,last_name,department_id from hr.Employees
+ where salary>any(select salary from hr.Employees where department_id=40)
+ --43
+ select first_name,last_name,hire_date from hr.Employees
+ where hire_date>(select hire_date from hr.Employees where employee_id=165)
+--44
+select first_name,last_name,salary,department_id from hr.Employees
+where salary<all(select salary from hr.Employees where department_id=70 )
+--45
+select first_name,last_name,salary,department_id from hr.Employees
+where salary<(select avg(salary)from hr.Employees) and department_id=(select department_id from hr.Employees where first_name='laura')
+--46
+select first_name,last_name,salary,department_id from hr.Employees
+where department_id in (select department_id from hr.Departments where  location_id=(select location_id from hr.Locations where  city='London'))
+--47
+select city from hr.Locations where location_id=(select location_id from hr.Departments where department_id=(select department_id from hr.Employees where employee_id=134))
+--48
+select * from hr.Departments where department_id in
+(select department_id from hr.Employees where employee_id in 
+(select employee_id from hr.Job_History group by employee_id
+having count(employee_id)>1) group by department_id having max(salary) >7000)
+--49
+select * from hr.Employees
+where employee_id in (
+select manager_id from hr.Employees 
+group by manager_id 
+having count(manager_id)>=4) 
+--51
+select * from HR.Employees
+where job_id in (select job_id from hr.Jobs where job_title='sales representatives')
+--52
+select * from hr.Employees
+where salary=(select max(salary) from hr.Employees where salary<>(select max(salary) from hr.Employees))
+--53
+select d.* from hr.Departments as d
+where manager_id in (select employee_id from hr.Employees where first_name='susan')
+--54
+select department_id,first_name,last_name ,salary from hr.Employees as e
+where salary=(select max(salary) from hr.Employees as e1 where e.department_id=e1.department_id)
+--55
+select * from hr.Employees
+where employee_id not in(select employee_id from hr.Job_History)
