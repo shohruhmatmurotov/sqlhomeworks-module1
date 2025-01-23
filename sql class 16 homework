@@ -1,0 +1,123 @@
+----homework class 16 soccer database 
+ --1
+ select  distinct match_no,country_name from soccer.match_details as d ,soccer.soccer_country as c where d.team_id=c.country_id and match_no=1
+ --2
+ select country_name from soccer.soccer_country
+ where country_id in (select team_id from soccer.match_details where play_stage='f' and win_lose='w')
+ --3
+ select * from soccer.match_mast where audience in (select max(audience) from soccer.match_mast)
+ --4
+ select match_no from soccer.match_details as m
+ where team_id=(select country_id from soccer.soccer_country where country_name='Germany')
+intersect 
+select match_no from soccer.match_details
+where team_id =(select country_id from soccer.soccer_country where country_name='poland')
+--5
+ select match_no from soccer.match_details 
+ where team_id=(select country_id from soccer.soccer_country where country_name='portugal')
+intersect 
+select match_no from soccer.match_details
+where team_id =(select country_id from soccer.soccer_country where country_name='hungary')
+--6
+select match_no,country_name,player_name,count(goal_id) as count from soccer.goal_details as d join soccer.player_mast as m on m.player_id=d.player_id
+join soccer.soccer_country as c on c.country_id=d.team_id
+group by match_no,country_name,player_name
+--7
+select country_name from soccer.soccer_country 
+where country_id in (select team_id from soccer.goal_details where match_no in (select match_no from soccer.match_mast where audience=(select max(audience) from soccer.match_mast)))
+--8
+select distinct  player_name from soccer.player_mast as m join soccer.goal_details  as d on m.player_id=d.player_id
+where match_no in 
+( select match_no from soccer.match_details 
+ where team_id=(select country_id from soccer.soccer_country where country_name='portugal')
+intersect 
+select match_no from soccer.match_details
+where team_id =(select country_id from soccer.soccer_country where country_name='hungary')
+) and goal_time in (select max(goal_time) from soccer.goal_details group by match_no)
+--9
+select max(stop2_sec) as max from soccer.match_mast
+where stop2_sec<>(select max(stop2_sec) from soccer.match_mast)
+--10
+select country_name from soccer.soccer_country
+where country_id  in (select team_id from soccer.match_details where match_no in (select match_no from soccer.match_mast where stop2_sec=(select max(stop2_sec) as max from soccer.match_mast
+where stop2_sec<>(select max(stop2_sec) from soccer.match_mast))))
+--11
+select match_no,play_date,stop2_sec from soccer.match_mast
+where stop2_sec=(select max(stop2_sec) as max from soccer.match_mast
+where stop2_sec<>(select max(stop2_sec) from soccer.match_mast)
+)
+--12
+select country_name from soccer.soccer_country
+where country_id in (select team_id from soccer.match_details where play_stage='F' and win_lose='L')
+--13
+select playing_club,count(player_name) from soccer.player_mast
+group by  playing_club
+having count(player_name)=(select max(number) from (select playing_club,count(player_name) as number  from soccer.player_mast
+group by  playing_club) as b)
+--14
+select player_name,jersey_no from soccer.player_mast as m
+join soccer.goal_details as d on d.player_id=m.player_id
+where m.player_id in (select player_id from soccer.goal_details where goal_type='P') 
+and match_no in (select min(match_no) from soccer.goal_details where goal_type='p' and  play_stage='G')
+--15
+select player_name,jersey_no from soccer.player_mast as m
+join soccer.goal_details as d on d.player_id=m.player_id
+join SOCCER.soccer_country  as c on c.country_id=m.team_id
+where m.player_id in (select player_id from soccer.goal_details where goal_type='P') 
+and match_no in (select min(match_no) from soccer.goal_details where goal_type='p' and play_stage='G')
+--16
+select * from soccer.player_mast 
+where player_id in (select player_gk from soccer.penalty_gk where match_no in (select match_no from soccer.penalty_gk where team_id in (select country_id from soccer.soccer_country where country_name='Germany' or country_name='Italy')))
+and team_id in (select country_id from soccer.soccer_country where country_name='italy')
+--17
+select count(goal_id) from soccer.goal_details as d ,soccer.soccer_country as c where d.team_id=c.country_id  and country_name='germany'
+group by country_name
+--18
+select * from soccer.player_mast as m ,soccer.soccer_country as c where m.team_id=c.country_id and country_name='england' and posi_to_play='gk'
+--19
+select * from soccer.player_mast as m ,soccer.soccer_country as c where m.team_id=c.country_id and country_name='england' and playing_club='liverpool'
+--20
+select player_name,jersey_no from soccer.player_mast as m
+join soccer.goal_details as d on d.player_id=m.player_id
+join SOCCER.soccer_country  as c on c.country_id=m.team_id
+where match_no=50
+and goal_time=(select max(goal_time) from soccer.goal_details where match_no=50)
+--21
+select *  from soccer.player_mast
+where  player_id in (select player_captain  from soccer.match_captain where team_id in (select team_id from soccer.match_details where win_lose='w'and play_stage='f'))
+--22
+select count(player_id)+11 as total_player from soccer.player_in_out
+where match_no=(select match_no from soccer.match_mast where play_stage='f') and in_out='i' and team_id=(select country_id from soccer.soccer_country where country_name='france')
+--23
+select player_name,jersey_no  from soccer.player_mast 
+where player_id in (select player_gk from soccer.match_details 
+where team_id in (select country_id from soccer.soccer_country 
+where country_name ='Germany') and play_stage='g') 
+--24
+select country_name from soccer.soccer_country where country_id in (select team_id from soccer.match_details where play_stage='f' and win_lose='l')
+--25
+select count(kick_id) as amount_penalty,country_name from soccer.soccer_country as c ,soccer.penalty_shootout as t where c.country_id=t.team_id
+group by country_name
+--26
+select country_name,player_name,jersey_no,count(kick_id) as penalty_kick from soccer.player_mast as m join soccer.penalty_shootout as t on m.player_id=t.player_id
+join soccer.soccer_country as c on c.country_id=m.team_id
+group by country_name,player_name,jersey_no
+--27
+select match_no ,count(*) from soccer.penalty_shootout
+group by match_no
+having  count(*)=(
+select    max(amount) from (select match_no,count(kick_id) as amount from soccer.penalty_shootout group by match_no) as a)
+--29
+select player_id,kick_no from soccer.penalty_shootout  as sd join soccer.soccer_country as c on sd.team_id=c.country_id
+where kick_no=7 and match_no in (select match_no from soccer.penalty_shootout where team_id in (select country_id from soccer.soccer_country where country_name='portugal' ))
+--30
+select play_stage from soccer.match_mast as m join soccer.penalty_shootout as sh on m.match_no=sh.match_no
+where kick_id=23
+--31
+select venue_name from soccer.soccer_venue
+where venue_id in (select venue_id from soccer.match_mast where match_no in (select distinct  match_no  from soccer.penalty_shootout))
+--32
+select play_date from soccer.match_mast
+where match_no in (select match_no from soccer.penalty_shootout)
+--33
+select min (goal_time) from (select goal_time from soccer.goal_details where goal_time>5) as a
