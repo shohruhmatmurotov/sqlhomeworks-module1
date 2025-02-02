@@ -1,0 +1,197 @@
+--1
+select * from dbo.Shippers
+--2
+select CategoryName,Description from dbo.Categories
+--3
+select FirstName,LastName,HireDate from dbo.Employees
+where Title='Sales Representative'
+--4
+select FirstName,LastName,HireDate from dbo.Employees
+where Title='Sales Representative' and Country='usa'
+--5
+select * from dbo.Orders
+where EmployeeID=5
+--6
+select * from dbo.Suppliers
+where ContactTitle <>'Marketing Manager'
+--7
+select * from dbo.Products
+where ProductName like '%queso%'
+--8
+select OrderID,CustomerID,ShipCountry from dbo.Orders
+where ShipCountry in ('france','belgium')
+--9
+select * from dbo.Orders
+where ShipCountry in ('brazil','mexico','argentina','venezuela')
+--10
+select FirstName,LastName,title,BirthDate from dbo.Employees
+order by BirthDate 
+--11
+select FirstName,LastName,title, cast(BirthDate  as date) as bithdate from dbo.Employees
+order by BirthDate 
+--12
+select firstname,lastname ,CONCAT(firstname,' ',LastName) as fullname from Employees
+--13
+select OrderID,ProductID,UnitPrice,Quantity,UnitPrice*Quantity as totalprice from OrderDetails
+--14
+select count(CustomerID) from dbo.Customers
+--15
+select min(orderdate) from dbo.Orders
+--16
+select max(Country) from dbo.Customers
+group by CustomerID
+--17
+select ContactTitle,count(CustomerID) as count from dbo.Customers
+group by ContactTitle
+--18
+select ProductID,ProductName,CompanyName from Suppliers as s
+join Products as p on s.SupplierID=p.SupplierID
+order by ProductID
+--19
+select OrderID,cast(orderdate as date) as orderdate,CompanyName from Orders as o
+join Shippers as sh on sh.ShipperID=o.ShipVia
+order by OrderID
+--20
+select CategoryName ,count(productid) as count from Products as p
+join Categories as c on c.CategoryID=p.CategoryID
+group by CategoryName
+--21
+select count(customerid),Country,City from Customers
+group by Country,City
+--22
+select ProductID,UnitsInStock,ReorderLevel  from Products
+where UnitsInStock<ReorderLevel
+order by ProductID
+--23
+select ProductID,  ProductName,UnitsInStock,UnitsOnOrder,ReorderLevel  from Products
+where UnitPrice+UnitsOnOrder<=ReorderLevel and Discontinued=0
+--24
+select CustomerID,Region from Customers
+order by case when Region is null  then 1 else 0 end ,Region,CustomerID
+--25
+select top 3 ShipCountry,AVG(freight) as avg from Orders
+group by ShipCountry
+order by avg desc
+--26
+select top 3 ShipCountry,AVG(freight) as avg from Orders
+where 2015=year(OrderDate)
+group by ShipCountry
+order by avg desc
+--27
+select OrderID from Orders
+where ShipCountry='france'
+--28
+select * from Orders
+where OrderDate between dateadd(YEAR,-1,( select max(OrderDate) from Orders)) and (select  max(OrderDate) from Orders)
+--29
+select e.EmployeeID,LastName,OrderID,ProductName,QuantityPerUnit from Orders as o join Employees as e on e.EmployeeID=o.EmployeeID join Products as p on p.SupplierID=o.ShipVia
+where OrderDate between dateadd(YEAR,-1,( select max(OrderDate) from Orders)) and (select  max(OrderDate) from Orders)
+--30
+select * from Customers as c
+left join Orders as o on o.CustomerID=c.CustomerID
+where o.CustomerID is null
+--31
+select CustomerID from Customers where CustomerID not in (
+select distinct  c.CustomerID from Customers as c left join Orders as o on c.CustomerID=o.CustomerID
+where EmployeeID=4)
+--- advanced problems
+--32
+select CustomerID ,sum (freight) from Orders
+where year(OrderDate)=2016
+group by CustomerID
+having sum(freight)>=1000 
+--33
+select CustomerID ,sum (freight)as high_value from Orders
+where year(OrderDate)=2016
+group by CustomerID
+having sum(freight)>=15000
+--34
+select CustomerID ,sum (freight) as high_value,sum (freight)*(1-0.15) as discount from Orders
+where year(OrderDate)=2016
+group by CustomerID
+having sum(freight)>=15000
+order by  high_value
+--35
+select OrderID,EmployeeID,OrderDate from Orders
+where OrderDate in (EOMONTH(OrderDate))
+--36
+select  top 10 count ,orderid from (select  count(o.OrderID) as count ,o.OrderID from Orders as o join OrderDetails as d on d.OrderID=o.OrderID
+group by o.OrderID
+)a
+select count(orderid) from Orders
+group by OrderID
+--37
+select top 2 percent * from Orders
+order  by NEWID()
+--38
+select  d.OrderID  from OrderDetails as d
+join OrderDetails d1 on d.OrderID=d1.OrderID and d.ProductID<>d1.ProductID and d.Quantity=d1.Quantity
+where d.Quantity>=60
+--39
+select  d.*  from OrderDetails as d
+join OrderDetails d1 on d.OrderID=d1.OrderID and d.ProductID<>d1.ProductID and d.Quantity=d1.Quantity
+where d.Quantity>=60
+--40
+select  d.*  from OrderDetails as d
+ join OrderDetails d1 on d.OrderID=d1.OrderID and d.ProductID<>d1.ProductID and d.Quantity=d1.Quantity
+where d.Quantity>=60
+--41
+select * from Orders
+where RequiredDate<ShippedDate;
+--42;
+select o.EmployeeID,count(ShippedDate),FirstName,LastName from Orders as o join Employees as e on e.EmployeeID=o.EmployeeID
+where RequiredDate<ShippedDate
+group by o.EmployeeID,FirstName,LastName;
+--43;
+with cte as (select o.EmployeeID,count(ShippedDate) as count ,FirstName,LastName from Orders as o join Employees as e on e.EmployeeID=o.EmployeeID
+where RequiredDate<ShippedDate
+group by o.EmployeeID,FirstName,LastName),
+cte1 as (select EmployeeID,count(*) as count from Orders group by EmployeeID )
+select cte.EmployeeID,cte.count,cte1.count,FirstName,LastName from cte join cte1 on cte.EmployeeID=cte1.EmployeeID
+--44
+with cte as (select o.EmployeeID,count(ShippedDate) as count ,FirstName,LastName from Orders as o join Employees as e on e.EmployeeID=o.EmployeeID
+where RequiredDate<ShippedDate
+group by o.EmployeeID,FirstName,LastName),
+cte1 as (select EmployeeID,count(*) as count from Orders group by EmployeeID )
+select cte.EmployeeID,cte.count,cte1.count,cte1.count-cte.count as difference_count,   FirstName,LastName from cte join cte1 on cte.EmployeeID=cte1.EmployeeID
+--45
+with cte as (select o.EmployeeID,count(ShippedDate) as count ,FirstName,LastName from Orders as o join Employees as e on e.EmployeeID=o.EmployeeID
+where RequiredDate<ShippedDate
+group by o.EmployeeID,FirstName,LastName),
+cte1 as (select EmployeeID,count(*) as count from Orders group by EmployeeID )
+select cte.EmployeeID,cte.count,cte1.count,isnull(cte1.count-cte.count,0) as difference_count,   FirstName,LastName from cte join cte1 on cte.EmployeeID=cte1.EmployeeID
+--46
+with cte as (select o.EmployeeID,count(ShippedDate) as count ,FirstName,LastName from Orders as o join Employees as e on e.EmployeeID=o.EmployeeID
+where RequiredDate<ShippedDate
+group by o.EmployeeID,FirstName,LastName),
+cte1 as (select EmployeeID,count(*) as count from Orders group by EmployeeID )
+select cte.EmployeeID,cte.count,cte1.count,cte1.count/cte.count as difference_count,   FirstName,LastName from cte join cte1 on cte.EmployeeID=cte1.EmployeeID
+--47
+with cte as (select o.EmployeeID,count(ShippedDate) as count ,FirstName,LastName from Orders as o join Employees as e on e.EmployeeID=o.EmployeeID
+where RequiredDate<ShippedDate
+group by o.EmployeeID,FirstName,LastName),
+cte1 as (select EmployeeID,count(*) as count from Orders group by EmployeeID )
+select cte.EmployeeID,cte.count,cte1.count ,(cte1.count/cte.count) as difference_count,   FirstName,LastName from cte join cte1 on cte.EmployeeID=cte1.EmployeeID
+--48
+select o.CustomerID,CompanyName ,sum(Quantity*UnitPrice) as value,case when sum(Quantity*UnitPrice)> 0 and sum(freight)<1000 then 'low'
+                                      when sum(Quantity*UnitPrice)<5000 then 'normal'
+									    when sum(Quantity*UnitPrice)<1000 then 'high'
+										when   sum(Quantity*UnitPrice)>1000 then 'very_high'end     as sum  from Orders as o join Customers as c on c.CustomerID=o.CustomerID join OrderDetails as d on o.OrderID=d.OrderID
+where year(OrderDate)=2016
+group by o.CustomerID,CompanyName 
+--49
+select o.CustomerID,CompanyName ,isnull(sum(Quantity*UnitPrice),0)as  value,case when sum(Quantity*UnitPrice)> 0 and sum(freight)<1000 then 'low'
+                                      when sum(Quantity*UnitPrice)<5000 then 'normal'
+									    when sum(Quantity*UnitPrice)<1000 then 'high'
+										when   sum(Quantity*UnitPrice)>1000 then 'very_high'end     as sum  from Orders as o join Customers as c on c.CustomerID=o.CustomerID join OrderDetails as d on o.OrderID=d.OrderID
+where year(OrderDate)=2016
+group by o.CustomerID,CompanyName 
+--50
+select count(sum) as count ,sum   from (
+select o.CustomerID,CompanyName ,sum(Quantity*UnitPrice) as value,case when sum(Quantity*UnitPrice)> 0 and sum(freight)<1000 then 'low'
+                                      when sum(Quantity*UnitPrice)<5000 then 'normal'
+									    when sum(Quantity*UnitPrice)<1000 then 'high'
+										when   sum(Quantity*UnitPrice)>1000 then 'very_high'end     as sum  from Orders as o join Customers as c on c.CustomerID=o.CustomerID join OrderDetails as d on o.OrderID=d.OrderID
+where year(OrderDate)=2016
+group by o.CustomerID,CompanyName ) as s
+group by sum
