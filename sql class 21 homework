@@ -1,0 +1,54 @@
+use Movies
+go
+
+select * from tblFilm
+select * from tblLanguage
+select * from tblCountry
+
+create  procedure sp_rec_movie(@dur int)
+as
+begin
+declare @nextmovie int
+if not exists(select * from sysobjects where xtype = 'U' and name = 'FilmsSuggested')	
+	begin
+	create table FilmsSuggested(
+	filmid int,
+	filmname nvarchar(max),
+	filmreleasedate datetime,
+	Languagename nvarchar(max),
+	Countryname nvarchar(max),
+	Directorname nvarchar(max),
+	FilmRuntimeminutes int,
+	FilmOscarNominations int,
+	status nvarchar(max),
+	watchedtime datetime)
+
+	insert into FilmsSuggested 
+	(filmid, filmname, filmreleasedate, languagename, countryname, directorname, filmruntimeminutes, filmoscarnominations)
+	select filmid, filmname, filmreleasedate, languagename, countryname, directorname, filmruntimeminutes, filmoscarnominations
+	from tblFilm f
+	join tblLanguage l on f.filmlanguageid = l.languageid
+	join tblCountry c on c.countryid = f.filmcountryid
+	join tblDirector d on d.directorid = f.filmdirectorid
+	end
+select top 1 @nextmovie = filmid
+from filmssuggested
+where status is null and @dur >= filmruntimeminutes
+order by filmoscarnominations desc, filmreleasedate
+
+if @nextmovie is not null
+begin
+update FilmsSuggested
+set status = 'Watched', watchedtime = getdate()
+where filmid = @nextmovie;
+select filmid, filmname, filmreleasedate, languagename, countryname, directorname, filmruntimeminutes, filmoscarnominations
+from Filmssuggested
+where filmid = @nextmovie
+end
+else
+begin
+update FilmsSuggested
+set status = null, watchedtime = null
+end
+end;
+
