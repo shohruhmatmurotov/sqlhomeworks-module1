@@ -1,0 +1,12 @@
+go
+ create proc tree(@a int) as 
+ with cte as (
+ select '*' as sign,1 as n ,1 as n2
+ union all
+ select sign,n+2,n2+1 from cte 
+ where n<@a*2-1)
+ select  space(@a -n2)+replicate(sign,n) from cte
+ union all
+ select top 50 percent  space(@a-2)+replicate(sign,3) from cte
+
+ exec tree 10
